@@ -22,7 +22,7 @@
 			return true;
 		}
 		
-		public function appendFormattedElement(&$wrapper, $data, $encode = false) {
+		public function appendFormattedElement(&$wrapper, $data, $encode = false, $mode = NULL, $entry_id = NULL) {
 			if (!is_array($data) or empty($data)) return;
 			
 			$list = new XMLElement($this->get('element_name'));
@@ -111,7 +111,7 @@
 			return $options;			
 		}
 		
-		function getSelectedLabels($data = null) {
+		function getSelectedLabels($data = null) {		
 			$states = $this->getValuesFromXML();
 			$selected = array();
 			
@@ -123,7 +123,7 @@
 			return $selected;
 		}
 
-		function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL){
+		function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL, $entry_id = null){
 			header('content-type: text/plain');
 			$states = $this->getValuesFromXML();
 			
@@ -152,7 +152,7 @@
 			else $wrapper->appendChild($label);		
 		}
 
-		function prepareTableValue($data, XMLElement $link=NULL){
+		function prepareTableValue($data, XMLElement $link=NULL, $entry_id = null){
 			$value = $data['value'];
 			
 			if(!is_array($value)) $value = array($value);
@@ -163,11 +163,11 @@
 			
 		}
 		
-		public function getParameterPoolValue($data){
+		public function getParameterPoolValue($data, $entry_id=NULL){
 			return $data;
 		}
 
-		public function processRawFieldData($data, &$status, $simulate=false, $entry_id=NULL){
+		public function processRawFieldData($data, &$status, &$message = NULL, $simulate=false, $entry_id=NULL){
 
 			$status = self::__OK__;
 
@@ -296,12 +296,12 @@
 			return (!empty($errors) ? self::__ERROR__ : self::__OK__);
 		}
 		
-		function createTable(){
+		function createTable(){			
 			return Symphony::Database()->query(
 				"CREATE TABLE IF NOT EXISTS `tbl_entries_data_" . $this->get('id') . "` (
 				  `id` int(11) unsigned NOT NULL auto_increment,
 				  `entry_id` int(11) unsigned NOT NULL,
-				  `value` varchar(255) default NULL,
+				  `value` varchar(191) default NULL,
 				  PRIMARY KEY  (`id`),
 				  KEY `entry_id` (`entry_id`),
 				  KEY `value` (`value`)
